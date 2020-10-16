@@ -14,13 +14,27 @@ Initial plugin release.
 ionic cordova plugin add cordova-plugin-google-ump
 ```
 
+## Plugin variables
+The following Cordova plugin variables are supported by the plugin.
+Note that these must be set at plugin installation time. If you wish to change plugin variables, you'll need to uninstall the plugin and reinstall it with the new variable values.
+
+### iOS
+- `APP_ID` - Your AdMob app-id
+	- e.g. `--variable APP_ID="ca-app-pub-123~456"`
+	- more details here: https://developers.google.com/admob/ump/ios/quick-start#add_app_id_to
+- `USAGE_DESC` - Describing your usage for the UMP SDK to display as a custom alert message.
+	- e.g. `--variable APP_ID="This identifier will be used to deliver personalized ads to you."`
+	- defaults to `"This identifier will be used to deliver personalized ads to you."` if not specified
+	- more details here: https://developers.google.com/admob/ump/ios/quick-start#app_tracking_transparency
+
+
 ## Ionic Include
 Include the plugin in your app.module.ts
 
 ```typescript
 ...
 
-import {Consent} from '../../plugins/cordova-plugin-google-ump/www/consent-typescript-wrapper';
+import {Ump} from '../../plugins/cordova-plugin-google-ump/www/consent-typescript-wrapper';
 
 ...
 
@@ -61,7 +75,7 @@ Should be called on every app start. Checks and returns a consent status. If the
 verifyConsent(isAgeConsent :boolean, isDebug :boolean) :Promise<ConsentResult>
 ```
 
-- isAgeConsent: If set to true, on the dialog is shown an option to the user, where he can choose to buy an ad-free pro version.
+- isAgeConsent: Set tag for under age of consent. Here false means users are not under age.
 - isDebug: If set to true, the device acts like it is in the EEA, even if it is not.
 
 

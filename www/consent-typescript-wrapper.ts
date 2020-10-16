@@ -3,6 +3,7 @@ import {Injectable, NgZone} from '@angular/core';
 export interface ConsentResult {
 	consent: boolean;
 	hasShownDialog: boolean;
+	formAvailable: boolean;
 }
 
 let ngZone;
@@ -37,8 +38,22 @@ export class Ump {
 		}
 
 		return new Promise((resolve, reject) =>
-			window['Ump']. forceForm(
+			window['Ump'].forceForm(
 				(value: ConsentResult) => ngZone.run(() => resolve(value)),
+				(value: string) => ngZone.run(() => reject(value))
+			)
+		);
+	}
+
+	reset() :Promise<any> {
+		if (!window['Ump']) {
+			console.warn('Ump plugin not present (forceForm)');
+			return Promise.reject('Ump plugin not present');
+		}
+
+		return new Promise((resolve, reject) =>
+			window['Ump'].reset(
+				(value: any) => ngZone.run(() => resolve(value)),
 				(value: string) => ngZone.run(() => reject(value))
 			)
 		);

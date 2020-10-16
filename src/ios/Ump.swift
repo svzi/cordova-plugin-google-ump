@@ -13,8 +13,8 @@ class Ump : CDVPlugin {
         let isAgeConsent = command.arguments[0] as? Bool ?? false
         let isDebug = command.arguments[1] as? Bool ?? false
         
-        print("isAgeConsent: \(isAgeConsent)")
-        print("isDebug: \(isDebug)")
+        print("verifyConsent isAgeConsent: \(isAgeConsent)")
+        print("verifyConsent isDebug: \(isDebug)")
 
 
         let debugSettings = UMPDebugSettings()
@@ -42,15 +42,18 @@ class Ump : CDVPlugin {
                 print("Error verifyConsent: \(error.localizedDescription)")
                 self.endError(error: error.localizedDescription, command: command)
             } else { // now check for available form and load it
-             
               let formStatus = UMPConsentInformation.sharedInstance.formStatus
+              print("verifyConsent formStatus: \(formStatus)")
               if formStatus == .available {
                 self.loadForm(command: command, forceForm: false)
               } else if formStatus == .unavailable {
                 // just in case no consent form is required
-                print("Consent form not required")
+                print("verifyConsent Consent form not required")
                 let jsonResult = ["consent" : true, "hasShownDialog" : false, "formAvailable": false] as [AnyHashable : Any]
                 self.endSuccess(jsonResult: jsonResult, command: command)
+              } else if formStatus == .unknown {
+                print("verifyConsent Consent form is unknown")
+                self.loadForm(command: command, forceForm: true)
               }
             }
         })
@@ -122,5 +125,13 @@ class Ump : CDVPlugin {
     func forceForm(command: CDVInvokedUrlCommand) {
         
         self.loadForm(command: command, forceForm: true)
+    }
+    
+    @objc(reset:)
+    func reset(command: CDVInvokedUrlCommand) {
+        
+        UMPConsentInformation.sharedInstance.reset()
+        let jsonResult = ["reset" : true] as [AnyHashable : Any]
+        self.endSuccess(jsonResult: jsonResult, command: command)
     }
 }
